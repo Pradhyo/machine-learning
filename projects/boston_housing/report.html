@@ -14634,6 +14634,18 @@ Model complexity: At this value, the testing score is the maximum == model perfo
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> Grid search technique is applying multiple sets of parameters to an algorithm, cross validating each set to find out which set of parameters gives the best performance.<br>
 This can be used to optimize a learning algorithm by choosing a set of parameters for the algorithm and finding the set that gives the best perfomance and using those parameters for prediction.</p>
+<div class="highlight"><pre><span></span><span class="c1"># list of parameters to search from, below example is 2x2=4 sets of parameters</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kernel&#39;</span><span class="p">:(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;rbf&#39;</span><span class="p">),</span> <span class="s1">&#39;C&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+<span class="c1"># algorithm to use</span>
+<span class="n">svr</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">()</span>
+<span class="c1"># classifier with algorithm and parameters</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">GridSearchCV</span><span class="p">(</span><span class="n">svr</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+<span class="c1"># tries all parameter combinations</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+<span class="c1"># access best parameters</span>
+<span class="k">print</span> <span class="n">clf</span><span class="o">.</span><span class="n">best_params_</span>
+</pre></div>
+<p>In the above example, all four sets of parameters are used, and the set of parameters with the highest score (r2_score/accuracy_score) is the best set of parameters.</p>
 
 </div>
 </div>
@@ -14657,6 +14669,7 @@ This can be used to optimize a learning algorithm by choosing a set of parameter
 <p><strong>Answer: </strong>
 Instead of just splitting into 20% testing, 80% training, k-fold uses all data as training and testing data by running k separate learning experiments and calculating the average.
 Ex. 200 data points, k=10 give 10 bins of 20 data points each.<br>
+Each time only one of the k bins is used for testing and the rest for training. This way each 'bin' is used exactly once for testing.<br>
 Benefits: Prevents overfitting on the training set used and the model is more generalized.</p>
 
 </div>
@@ -14693,7 +14706,7 @@ Benefits: Prevents overfitting on the training set used and the model is more ge
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># TODO: Import &#39;make_scorer&#39;, &#39;DecisionTreeRegressor&#39;, and &#39;GridSearchCV&#39;</span>
@@ -14706,7 +14719,7 @@ Benefits: Prevents overfitting on the training set used and the model is more ge
 <span class="sd">        decision tree regressor trained on the input data [X, y]. &quot;&quot;&quot;</span>
     
     <span class="c1"># Create cross-validation sets from the training data</span>
-    <span class="n">cv_sets</span> <span class="o">=</span> <span class="n">ShuffleSplit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cv_sets</span> <span class="o">=</span> <span class="n">ShuffleSplit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
 
     <span class="c1"># TODO: Create a decision tree regressor object</span>
     <span class="n">regressor</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">()</span>
@@ -14960,13 +14973,14 @@ Range in prices: $69,044.61
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong></p>
+<p><strong>Answer: </strong>
+No, the model shouldn't be used in a real-world setting because of the following reasons:</p>
 <ol>
-<li>Not very- home values in neighborhoods would have changed because of change in schools/crime rates/malls/public transport etc.</li>
-<li>No, we could have used more features (like crime rate/area of house etc.) in addition/instead of above features.</li>
-<li>Yes, learning curves shows training and testing scores converge at a high enough value of around 0.8. Also, the range of predicted values from above is /$69,000 which is acceptable. But adding one or two more features would probably make it even more robust.</li>
-<li>No, home values would be much lower in rural cities.</li>
+<li>The data, though scaled is not very relevant today- home values in neighborhoods would have changed because of change in schools/crime rates/malls/public transport etc.</li>
+<li>More features (like crime rate/area of house etc.) should be used in addition/instead of above features to sufficiently describe a home.</li>
+<li>Home values would be much lower in rural cities and hence this model cannot be used in such cities.</li>
 </ol>
+<p>The model though is robust enough for consistent predictions- learning curves shows training and testing scores converge at a high enough value of around 0.8. Also, the range of predicted values from above is /$69,000 which is acceptable. But adding one or two more features would probably make it even more robust.</p>
 
 </div>
 </div>
