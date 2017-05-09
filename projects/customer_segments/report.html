@@ -21939,7 +21939,8 @@ Variance explained by:</p>
 <li>first two: 0.7068</li>
 <li>first four: 0.9311     </li>
 </ol>
-<p>Dimensions:</p>
+<p>Dimensions:<br>
+Each dimension does not represent a different type of customer. However, each dimension does assign values to different types of products, which in turn could help differentiate different type of customers. For all dimensions, high value (+ve) for a product means high volume of purchase for that product and low value (-ve) means low volume. Customers with a high value for one of the PCA dimensions and low values for the others after the feature transformation could be interpreted as below for each of the first four dimensions respectively:</p>
 <ol>
 <li>Lots of detergents and a decent amout of milk, grocery and delicatessen- could represent supermarkets.</li>
 <li>Little bit of everything with a lot of Fresh, frozen and Delicatessen- could represent restaurants.</li>
@@ -23990,7 +23991,20 @@ Points are close to each other so soft clustering is the way to go.</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong><br>
-Some scores are reported above, best silhoutte score was when number of clusters = 2.</p>
+Some scores are reported below, best silhoutte score was when number of clusters = 2.</p>
+<p>2: 0.411818864386<br>
+6: 0.286066858129<br>
+10: 0.281352745066<br>
+14: 0.254315148978<br>
+18: 0.201747120428<br>
+22: 0.235402032249<br>
+26: 0.18011510033<br>
+30: 0.157407394686<br>
+34: 0.0869324924242<br>
+38: 0.104742215379<br>
+42: 0.120224355881<br>
+46: 0.10181127408<br>
+50: 0.0848926572289</p>
 
 </div>
 </div>
@@ -25235,8 +25249,12 @@ n6wAAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong><br>
-<strong>Segment 0</strong>: Likely represents supermarkets/local delis because they buy lots of grocery/milk/detergent/paper to resell.</p>
-<p><strong>Segment 1</strong>: Likely represents restaurants/fast food chains because they buy lots of fresh and frozen items to prepare food.</p>
+<strong>Segment 0</strong>:<br>
+Delicatessen purchases are close to the average while milk/grocery/detergent/paper purchases are close to 75th percentile.<br>
+This segment likely represents supermarkets/local delis because they buy lots of grocery/milk/detergent/paper to resell.</p>
+<p><strong>Segment 1</strong>:<br>
+Greater than average amounts of fresh and frozen products are purchased- likely to prepare food. Purchase of remaining products falls between 25th percentile and 50th percentile- this means they are likely utilized instead of being resold.<br>
+This segment likely represents restaurants/fast food chains.</p>
 
 </div>
 </div>
@@ -25289,9 +25307,12 @@ Sample point 2 predicted to be in Cluster 0
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong><br>
-Sample 0: My initial prediction was that it was restaurant but the model predicted it was a supermarket. It does makes sense because all items are bought in quantities greater than average- a restaurant wouldn't need so much delicatessen/milk.<br>
-Sample 1: My prediction was inline with the model's that it could be a fast food establishemnt.
-Sample 2: My prediction matched that of the model that it could be a supermarket as all items are bought is bulk possibly to resell.</p>
+<strong>Sample 0</strong>:<br>
+Comparing with the cluster centers from above, all products except 'Fresh' are closer to the cluster center for segment 0. This means that the model is likely going to predict that this sample belongs to segment 0 (supermarket). My initial prediction was that it was restaurant but the model predicts that it is a supermarket. It does makes sense because all items are bought in quantities greater than average- a restaurant wouldn't need so much delicatessen/milk.</p>
+<p><strong>Sample 1</strong>:<br>
+Comparing with the cluster centers from above, all products except 'Fresh' are closer to the cluster center for segment 1. This means that the model is likely going to predict that this sample belongs to segment 1 (restaurant). My initial prediction was inline with the model's that it could be a fast food establishemnt given the greater than average amount of frozen and fresh purchases.</p>
+<p><strong>Sample 2</strong>:<br>
+Comparing with the cluster centers from above, all products except 'Fresh' and 'Frozen' are closer to the cluster center for segment 0. This means that the model is likely going to predict that this sample belongs to segment 0 (supermarket). My initial prediction was inline with the model's that it could be a supermarket purchasing all types of products in bulk and reselling them.</p>
 
 </div>
 </div>
