@@ -8,7 +8,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5):
+    def __init__(self, env, learning=True, epsilon=1.0, alpha=0.5):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -23,6 +23,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
+        self.trial_num = 1
 
 
     def reset(self, destination=None, testing=False):
@@ -39,6 +40,17 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
+        if testing:
+            self.epsilon = 0.0
+            self.alpha = 0.0
+        else:
+            # Question 6
+            # self.epsilon = self.epsilon - 0.05
+
+            # Improved Q learning
+            # self.epsilon = 1 / (self.trial_num)
+            self.epsilon = 1 / (self.trial_num**0.5)
+            self.trial_num += 1
 
         return None
 
@@ -72,6 +84,9 @@ class LearningAgent(Agent):
 
         maxQ = None
 
+        if state in self.Q:
+            maxQ = max(self.Q[state].values())
+
         return maxQ
 
 
@@ -84,6 +99,8 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
+        if self.learning and state not in self.Q:
+            self.Q[state] = dict((action, 0.0) for action in self.valid_actions)
 
         return
 
@@ -95,7 +112,7 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = random.choice(self.valid_actions)
+        action = None
 
         ###########
         ## TO DO ##
@@ -104,6 +121,11 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
 
+        # uniformly distributed random number > epsilon happens with probability 1-epsilon
+        if self.learning and random.random() > self.epsilon:
+            action = max(self.Q[state], key=self.Q[state].get)
+        else:
+            action = random.choice(self.valid_actions)
         return action
 
 
@@ -117,7 +139,11 @@ class LearningAgent(Agent):
         ###########
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-
+        if self.learning:
+            # Q = Q*(1-alpha) + alpha(reward + discount + utility of next state)
+            # Q = Q - Q * alpha + alpha(reward)
+            # not sure how to get next self.get_maxQ(next_state) so ignoring it
+            self.Q[state][action] += self.alpha * (reward - self.Q[state][action])
         return
 
 
@@ -168,14 +194,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, display=False, log_metrics=True)
+    sim = Simulator(env, update_delay=0.01, display=False, log_metrics=True, optimized=True)
 
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=10)
+    sim.run(n_test=10, tolerance=0.057)
 
 
 if __name__ == '__main__':
