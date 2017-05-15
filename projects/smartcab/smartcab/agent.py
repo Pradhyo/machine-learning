@@ -49,7 +49,13 @@ class LearningAgent(Agent):
 
             # Improved Q learning
             # self.epsilon = 1 / (self.trial_num)
-            self.epsilon = 1 / (self.trial_num**0.5)
+
+            # Hacky way to reduce rate of epsilon decay
+            # 100th trial, epsilon is 0.1 so reducing linearly until then
+            if self.trial_num > 100:
+                self.epsilon = 1 / (self.trial_num**0.5)
+            else:
+                self.epsilon -= 0.009
             self.trial_num += 1
 
         return None
