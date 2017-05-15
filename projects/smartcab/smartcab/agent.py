@@ -123,7 +123,11 @@ class LearningAgent(Agent):
 
         # uniformly distributed random number > epsilon happens with probability 1-epsilon
         if self.learning and random.random() > self.epsilon:
-            action = max(self.Q[state], key=self.Q[state].get)
+            maxQ = self.get_maxQ(state)
+
+            # multiple actions could have maxQ- pick one at random in that case
+            action = random.choice([k for k in self.Q[state].keys()
+                                    if self.Q[state][k] == maxQ])
         else:
             action = random.choice(self.valid_actions)
         return action
@@ -140,9 +144,8 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:
-            # Q = Q*(1-alpha) + alpha(reward + discount + utility of next state)
-            # Q = Q - Q * alpha + alpha(reward)
-            # not sure how to get next self.get_maxQ(next_state) so ignoring it
+            # Q = Q*(1-alpha) + alpha(reward + discount * utility of next state)
+            # Q = Q - Q * alpha + alpha(reward) # ignoring self.get_maxQ(next_state) as gamma=0
             self.Q[state][action] += self.alpha * (reward - self.Q[state][action])
         return
 
